@@ -1,9 +1,12 @@
 /**
  *
  */
-package com.hk.assignment;
+package com.hk.formatter;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.hk.formatter.NumberConversionRule;
+import com.hk.formatter.engine.Processor;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -16,9 +19,9 @@ import static org.junit.Assert.assertEquals;
  * @author hkhan
  *
  */
-public class RuleTest {
+public class NumberConversionRuleTest {
 
-    private Rule rule;
+    private NumberConversionRule rule;
 
     private String result;
 
@@ -31,21 +34,21 @@ public class RuleTest {
 
     @Test
     public void testRuleCreation() {
-        rule = new Rule("1: one", processor);
+        rule = new NumberConversionRule("1: one", processor);
         assertEquals("one", rule.getRuleText());
         assertEquals(1, rule.getBaseValue().intValue());
     }
 
     @Test
     public void testSimpleRuleApplication() {
-        rule = new Rule("1: one", processor);
+        rule = new NumberConversionRule("1: one", processor);
         result = rule.apply(1);
         assertEquals("one", result);
     }
 
     @Test
     public void testRuleWithModulusSubstitutionApplied() {
-        rule = new Rule("20: twenty<-%mod%>", processor);
+        rule = new NumberConversionRule("20: twenty<-%mod%>", processor);
         expect(processor.process(5)).andReturn("five");
         replay(processor);
 
@@ -57,8 +60,22 @@ public class RuleTest {
 
     @Test
     public void testRuleWithModulusSubstitutionNotApplied() {
-        rule = new Rule("20: twenty<-%mod%>", processor);
+        rule = new NumberConversionRule("20: twenty<-%mod%>", processor);
         String result = rule.apply(20);
         assertEquals("twenty", result);
+    }
+
+    @Test
+    public void testRuleWithQuotientAndModulusSubstitutionApplied() {
+        rule = new NumberConversionRule("100: <%quo%> hundred <and %mod%>", processor);
+
+        expect(processor.process(1)).andReturn("one");
+        expect(processor.process(5)).andReturn("five");
+        replay(processor);
+
+        result = rule.apply(105);
+
+        verify(processor);
+        assertEquals("one hundred and five", result);
     }
 }
