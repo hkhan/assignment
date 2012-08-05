@@ -1,10 +1,9 @@
 /**
  *
  */
-package com.hk.formatter;
+package com.hk.text.process;
 
-import com.hk.formatter.engine.Processor;
-import com.hk.formatter.engine.Rule;
+
 
 /**
  * This class is responsible for parsing the rule description and setting up the rule
@@ -13,9 +12,9 @@ import com.hk.formatter.engine.Rule;
  * @author hkhan
  *
  */
-class NumberConversionRule implements Rule<Integer, String> {
+class NumberConversionRule implements Rule {
 
-    private Integer baseValue;
+    private Long baseValue;
 
     private String ruleText;
 
@@ -24,33 +23,34 @@ class NumberConversionRule implements Rule<Integer, String> {
     public NumberConversionRule(String description, Processor processor) {
         String[] splitDesc = description.split(":");
         ruleText = splitDesc[1].trim();
-        baseValue = Integer.valueOf(splitDesc[0].trim());
+        baseValue = Long.valueOf(splitDesc[0].trim());
         this.processor = processor;
     }
 
     @Override
-    public String apply(Integer number) {
-
+    public String apply(long number) {
         String text = ruleText;
 
-        if (text.contains("%quo%")) {
-            Integer newNumber = number / getDivisor();
-            String quoText = processor.process(newNumber);
-            text = text.replaceAll("%quo%", quoText).replaceFirst("<", "").replaceFirst(">", "");
+        if (text.contains("<")) {
+            long newNumber = number / getDivisor();
+            String quotientText = processor.process(newNumber);
+            text = text.replaceAll("<", quotientText);
         }
 
-        if (text.contains("%mod%") && (number % getDivisor() != 0)) {
-            Integer newNumber = number % getDivisor();
-            String modText = processor.process(newNumber);
-            text = text.replaceAll("%mod%", modText).replaceFirst("<", "").replaceFirst(">", "");
+        if (text.contains(">")) {
+            if (number % getDivisor() != 0) {
+                long newNumber = number % getDivisor();
+                String remainderText = processor.process(newNumber);
+                text = text.replaceAll(">", remainderText).replaceAll("\\[|\\]", "");
+            } else {
+                text = text.replaceAll("\\[.*\\]", "");
+            }
         }
 
-        return text.replaceAll("<.*>", "");
-
+        return text;
     }
 
     private Integer getDivisor() {
-
         int divisor = 0;
 
         if (baseValue < 100) {
@@ -70,8 +70,8 @@ class NumberConversionRule implements Rule<Integer, String> {
         return ruleText;
     }
 
-    public Integer getBaseValue() {
+    @Override
+    public Long getBaseValue() {
         return baseValue;
     }
-
 }

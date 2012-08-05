@@ -1,7 +1,9 @@
 /**
  *
  */
-package com.hk.formatter.engine;
+package com.hk.text.process;
+
+
 
 
 /**
@@ -13,6 +15,6 @@ package com.hk.formatter.engine;
  */
 public interface Processor {
 
-    String process(Integer number);
+    String process(long number);
 
 }

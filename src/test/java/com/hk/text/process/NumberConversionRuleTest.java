@@ -1,12 +1,12 @@
 /**
  *
  */
-package com.hk.formatter;
+package com.hk.text.process;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hk.formatter.NumberConversionRule;
-import com.hk.formatter.engine.Processor;
+import com.hk.text.process.NumberConversionRule;
+import com.hk.text.process.Processor;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -48,7 +48,7 @@ public class NumberConversionRuleTest {
 
     @Test
     public void testRuleWithModulusSubstitutionApplied() {
-        rule = new NumberConversionRule("20: twenty<-%mod%>", processor);
+        rule = new NumberConversionRule("20: twenty[->]", processor);
         expect(processor.process(5)).andReturn("five");
         replay(processor);
 
@@ -60,14 +60,14 @@ public class NumberConversionRuleTest {
 
     @Test
     public void testRuleWithModulusSubstitutionNotApplied() {
-        rule = new NumberConversionRule("20: twenty<-%mod%>", processor);
+        rule = new NumberConversionRule("20: twenty[->]", processor);
         String result = rule.apply(20);
         assertEquals("twenty", result);
     }
 
     @Test
     public void testRuleWithQuotientAndModulusSubstitutionApplied() {
-        rule = new NumberConversionRule("100: <%quo%> hundred <and %mod%>", processor);
+        rule = new NumberConversionRule("100: < hundred[ and >]", processor);
 
         expect(processor.process(1)).andReturn("one");
         expect(processor.process(5)).andReturn("five");
