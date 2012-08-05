@@ -5,9 +5,6 @@ package com.hk.text.process;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hk.text.process.NumberConversionRule;
-import com.hk.text.process.Processor;
-
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -34,25 +31,25 @@ public class NumberConversionRuleTest {
 
     @Test
     public void testRuleCreation() {
-        rule = new NumberConversionRule("1: one", processor);
+        rule = new NumberConversionRule("1: one");
         assertEquals("one", rule.getRuleText());
         assertEquals(1, rule.getBaseValue().intValue());
     }
 
     @Test
     public void testSimpleRuleApplication() {
-        rule = new NumberConversionRule("1: one", processor);
-        result = rule.apply(1);
+        rule = new NumberConversionRule("1: one");
+        result = rule.apply(1, processor);
         assertEquals("one", result);
     }
 
     @Test
     public void testRuleWithModulusSubstitutionApplied() {
-        rule = new NumberConversionRule("20: twenty[->]", processor);
+        rule = new NumberConversionRule("20: twenty[->]");
         expect(processor.process(5)).andReturn("five");
         replay(processor);
 
-        String result = rule.apply(25);
+        String result = rule.apply(25, processor);
 
         verify(processor);
         assertEquals("twenty-five", result);
@@ -60,22 +57,48 @@ public class NumberConversionRuleTest {
 
     @Test
     public void testRuleWithModulusSubstitutionNotApplied() {
-        rule = new NumberConversionRule("20: twenty[->]", processor);
-        String result = rule.apply(20);
+        rule = new NumberConversionRule("20: twenty[->]");
+        String result = rule.apply(20, processor);
         assertEquals("twenty", result);
     }
 
     @Test
     public void testRuleWithQuotientAndModulusSubstitutionApplied() {
-        rule = new NumberConversionRule("100: < hundred[ and >]", processor);
+        rule = new NumberConversionRule("100: < hundred[ and >]");
 
         expect(processor.process(1)).andReturn("one");
         expect(processor.process(5)).andReturn("five");
         replay(processor);
 
-        result = rule.apply(105);
+        result = rule.apply(105, processor);
 
         verify(processor);
         assertEquals("one hundred and five", result);
+    }
+
+    @Test
+    public void testRuleWithHighBaseValue() {
+        rule = new NumberConversionRule("1000: < thousand[ >]");
+
+        expect(processor.process(1)).andReturn("one");
+        replay(processor);
+
+        result = rule.apply(1000, processor);
+
+        verify(processor);
+        assertEquals("one thousand", result);
+    }
+
+    @Test
+    public void testRuleWithHighestBaseValue() {
+        rule = new NumberConversionRule("1000000: < million[ >]");
+
+        expect(processor.process(1)).andReturn("one");
+        replay(processor);
+
+        result = rule.apply(1000000, processor);
+
+        verify(processor);
+        assertEquals("one million", result);
     }
 }

@@ -22,27 +22,26 @@ import java.util.TreeMap;
  */
 class NumberRuleProcessor implements Processor {
 
-    private final NavigableMap<Long, Rule> rules = new TreeMap<Long, Rule>();
+    private final NavigableMap<Long, Rule> searchableRules = new TreeMap<Long, Rule>();
 
     /**
      * Inititializes with the rule descriptions.
      *
      * @param rules
      */
-    public NumberRuleProcessor(List<String> ruleDescriptions) {
-        for (String ruleDescription : ruleDescriptions) {
-            Rule rule = new NumberConversionRule(ruleDescription, this);
-            rules.put(rule.getBaseValue(), rule);
+    public NumberRuleProcessor(List<Rule> rules) {
+        for (Rule rule : rules) {
+            searchableRules.put(rule.getBaseValue(), rule);
         }
     }
 
     @Override
     public String process(long number) {
-        return findRule(number).apply(number);
+        return findRule(number).apply(number, this);
     }
 
-    public Rule findRule(long number) {
-        return rules.floorEntry(number).getValue();
+    private Rule findRule(long number) {
+        return searchableRules.floorEntry(number).getValue();
     }
 
 }

@@ -18,17 +18,14 @@ class NumberConversionRule implements Rule {
 
     private String ruleText;
 
-    private Processor processor;
-
-    public NumberConversionRule(String description, Processor processor) {
+    public NumberConversionRule(String description) {
         String[] splitDesc = description.split(":");
         ruleText = splitDesc[1].trim();
         baseValue = Long.valueOf(splitDesc[0].trim());
-        this.processor = processor;
     }
 
     @Override
-    public String apply(long number) {
+    public String apply(long number, Processor processor) {
         String text = ruleText;
 
         if (text.contains("<")) {
@@ -66,6 +63,7 @@ class NumberConversionRule implements Rule {
         return divisor;
     }
 
+    @Override
     public String getRuleText() {
         return ruleText;
     }
