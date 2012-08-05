@@ -31,11 +31,15 @@ public class RuleFormat extends NumberFormat {
 
     @Override
     public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
-        if (number < FORMAT_RANGE_MIN || number > FORMAT_RANGE_MAX) {
-            throw new IllegalArgumentException(String.format("ERROR: the input is not in valid range: %s", number));
-        }
+        checkArgs(number);
 
         return toAppendTo.append(ruleProcessor.process(number));
+    }
+
+    private void checkArgs(long number) {
+        if (number < FORMAT_RANGE_MIN || number > FORMAT_RANGE_MAX) {
+            throw new IllegalArgumentException(String.format("ERROR: the input is not valid: %s", number));
+        }
     }
 
     @Override
