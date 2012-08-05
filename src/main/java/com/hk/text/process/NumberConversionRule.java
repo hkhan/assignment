@@ -3,7 +3,8 @@
  */
 package com.hk.text.process;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is responsible for parsing the rule description and setting up the rule
@@ -18,38 +19,37 @@ class NumberConversionRule implements Rule {
 
     private String ruleText;
 
-    public NumberConversionRule(String description) {
+    private List<Action> actions;
+
+    private int divisor;
+
+    NumberConversionRule(String description) {
         String[] splitDesc = description.split(":");
         ruleText = splitDesc[1].trim();
         baseValue = Long.valueOf(splitDesc[0].trim());
+        calculateDivisor();
+
+        setupRuleActions();
+    }
+
+    private void setupRuleActions() {
+        actions = new ArrayList<Action>();
+        actions.add(new QuotientSubstitution(divisor));
+        actions.add(new RemainderSubstitution(divisor));
     }
 
     @Override
     public String apply(long number, Processor processor) {
         String text = ruleText;
 
-        if (text.contains("<")) {
-            long newNumber = number / getDivisor();
-            String quotientText = processor.process(newNumber);
-            text = text.replaceAll("<", quotientText);
-        }
-
-        if (text.contains(">")) {
-            if (number % getDivisor() != 0) {
-                long newNumber = number % getDivisor();
-                String remainderText = processor.process(newNumber);
-                text = text.replaceAll(">", remainderText).replaceAll("\\[|\\]", "");
-            } else {
-                text = text.replaceAll("\\[.*\\]", "");
-            }
+        for (Action action : actions) {
+            text = action.perform(number, text, processor);
         }
 
         return text;
     }
 
-    private Integer getDivisor() {
-        int divisor = 0;
-
+    private void calculateDivisor() {
         if (baseValue < 100) {
             divisor =  10;
         } else if (baseValue < 1000) {
@@ -59,8 +59,6 @@ class NumberConversionRule implements Rule {
         } else {
             divisor = 1000000;
         }
-
-        return divisor;
     }
 
     @Override

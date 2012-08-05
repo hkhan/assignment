@@ -27,5 +27,5 @@
 80: eighty[->]
 90: ninety[->]
 100: < hundred[ and >]
-1000: < thousand[ >]
-1000000: < million[ >]
+1000: < thousand >
+1000000: < million >

@@ -20,7 +20,7 @@ import java.util.TreeMap;
  * @author hkhan
  *
  */
-class NumberRuleProcessor implements Processor {
+public class NumberRuleProcessor implements Processor {
 
     private final NavigableMap<Long, Rule> searchableRules = new TreeMap<Long, Rule>();
 
