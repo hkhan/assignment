@@ -21,9 +21,14 @@ abstract class Substitution implements Action {
 
     @Override
     public String perform(Long number, String source, Processor processor) {
-        return substitute(number, source, processor);
+        if (source.contains(getPlaceholder())) {
+            source = substitute(number, source, processor);
+        }
+
+        return source;
     }
 
     abstract String substitute(Long number, String source, Processor processor);
 
+    abstract String getPlaceholder();
 }

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Tester {
+public class Demo {
 
     /**
-     * Tester to demonstrate the formatting functionality.
+     * Demo to demonstrate the formatting functionality.
      *
      * If there are no args supplied then random numbers are converted and displayed.
      * If args are supplied then they are converted and displayed accordingly.
@@ -41,10 +41,11 @@ public class Tester {
             input.add(21L);
             input.add(105L);
             input.add(56945781L);
+            input.add(999999999L);
         } else {
             for (String arg : args) {
                 try {
-                    Long.valueOf(arg);
+                    input.add(Long.valueOf(arg));
                 } catch (NumberFormatException nfe) {
                     System.err.println(String.format("Invalid number [%s]", arg));
                 }

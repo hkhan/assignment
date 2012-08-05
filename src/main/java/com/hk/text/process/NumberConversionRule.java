@@ -23,24 +23,21 @@ class NumberConversionRule implements Rule {
 
     private List<Action> actions;
 
-    public NumberConversionRule(String description) {
+    private int divisor;
+
+    NumberConversionRule(String description) {
         String[] splitDesc = description.split(":");
         ruleText = splitDesc[1].trim();
         baseValue = Long.valueOf(splitDesc[0].trim());
+        calculateDivisor();
 
+        setupRuleActions();
+    }
+
+    private void setupRuleActions() {
         actions = new ArrayList<Action>();
-
-        if (ruleText.contains(QuotientSubstitution.PLACEHOLDER)) {
-            actions.add(new QuotientSubstitution(getDivisor()));
-        } else {
-            actions.add(new NopSubstitution(getDivisor()));
-        }
-
-        if (ruleText.contains(RemainderSubstitution.PLACEHOLDER)) {
-            actions.add(new RemainderSubstitution(getDivisor()));
-        } else {
-            actions.add(new NopSubstitution(getDivisor()));
-        }
+        actions.add(new QuotientSubstitution(divisor));
+        actions.add(new RemainderSubstitution(divisor));
     }
 
     @Override
@@ -54,9 +51,7 @@ class NumberConversionRule implements Rule {
         return text;
     }
 
-    private Integer getDivisor() {
-        int divisor = 0;
-
+    private void calculateDivisor() {
         if (baseValue < 100) {
             divisor =  10;
         } else if (baseValue < 1000) {
@@ -66,8 +61,6 @@ class NumberConversionRule implements Rule {
         } else {
             divisor = 1000000;
         }
-
-        return divisor;
     }
 
     @Override

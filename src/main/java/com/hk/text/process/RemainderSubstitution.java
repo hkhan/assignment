@@ -30,5 +30,9 @@ class RemainderSubstitution extends Substitution {
         return text;
     }
 
+    @Override
+    String getPlaceholder() {
+        return PLACEHOLDER;
+    }
 
 }

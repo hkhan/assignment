@@ -6,7 +6,7 @@ package com.hk.text.process;
  * @author hkhan
  *
  */
-public class QuotientSubstitution extends Substitution {
+class QuotientSubstitution extends Substitution {
 
     static final String PLACEHOLDER = "<";
 
@@ -19,6 +19,11 @@ public class QuotientSubstitution extends Substitution {
         long newNumber = number / getDivisor();
         String quotientText = processor.process(newNumber);
         return source.replaceAll("<", quotientText);
+    }
+
+    @Override
+    String getPlaceholder() {
+        return PLACEHOLDER;
     }
 
 }

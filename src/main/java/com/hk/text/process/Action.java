@@ -9,7 +9,7 @@ package com.hk.text.process;
  * @author hkhan
  *
  */
-public interface Action {
+interface Action {
 
     /**
      *
