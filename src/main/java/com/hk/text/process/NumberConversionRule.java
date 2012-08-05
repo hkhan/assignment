@@ -3,6 +3,9 @@
  */
 package com.hk.text.process;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 
 /**
@@ -18,30 +21,34 @@ class NumberConversionRule implements Rule {
 
     private String ruleText;
 
+    private List<Action> actions;
+
     public NumberConversionRule(String description) {
         String[] splitDesc = description.split(":");
         ruleText = splitDesc[1].trim();
         baseValue = Long.valueOf(splitDesc[0].trim());
+
+        actions = new ArrayList<Action>();
+
+        if (ruleText.contains(QuotientSubstitution.PLACEHOLDER)) {
+            actions.add(new QuotientSubstitution(getDivisor()));
+        } else {
+            actions.add(new NopSubstitution(getDivisor()));
+        }
+
+        if (ruleText.contains(RemainderSubstitution.PLACEHOLDER)) {
+            actions.add(new RemainderSubstitution(getDivisor()));
+        } else {
+            actions.add(new NopSubstitution(getDivisor()));
+        }
     }
 
     @Override
     public String apply(long number, Processor processor) {
         String text = ruleText;
 
-        if (text.contains("<")) {
-            long newNumber = number / getDivisor();
-            String quotientText = processor.process(newNumber);
-            text = text.replaceAll("<", quotientText);
-        }
-
-        if (text.contains(">")) {
-            if (number % getDivisor() != 0) {
-                long newNumber = number % getDivisor();
-                String remainderText = processor.process(newNumber);
-                text = text.replaceAll(">", remainderText).replaceAll("\\[|\\]", "");
-            } else {
-                text = text.replaceAll("\\[.*\\]", "");
-            }
+        for (Action action : actions) {
+            text = action.perform(number, text, processor);
         }
 
         return text;
