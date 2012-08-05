@@ -34,6 +34,10 @@ import com.hk.text.process.ProcessorFactory;
  * substitution is applied)<br>
  * <code>100: < thousand ></code> (rule with quotient and remainder substitutions)
  *
+ * <br><br>
+ *
+ * Numbers which can be formatted using this class are in the range 0 <= n <= 999,999,999
+ *
  * @author hkhan
  *
  */
@@ -46,10 +50,19 @@ public class RuleFormat extends NumberFormat {
 
     private transient Processor ruleProcessor;
 
+    /**
+     * Creates a {@link RuleFormat} with a default processor using the provided set of rules for converting
+     * numbers to text.
+     */
     public RuleFormat() {
         ruleProcessor = ProcessorFactory.DEFAULT_RULE_PROCESSOR;
     }
 
+    /**
+     * Create a {@link RuleFormat} with the provided processor which can use apply custom fomatting rules and validaiton.
+     *
+     * @param processor for applying rules to input
+     */
     public RuleFormat(Processor processor) {
         this.ruleProcessor = processor;
     }

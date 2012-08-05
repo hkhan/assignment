@@ -6,8 +6,6 @@ package com.hk.text.process;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
  * This class is responsible for parsing the rule description and setting up the rule
  * to convert the number to text.
